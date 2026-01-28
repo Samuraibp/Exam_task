@@ -26,7 +26,7 @@ public:
 	int GetHeight() { return height; }
 	virtual void run() = 0;
 	virtual void jump() = 0;
-	virtual ~Member() = 0;
+	virtual ~Member() {}
 };
 
 class Human : public Member
@@ -81,7 +81,7 @@ class Obstacle
 {
 public:
 	virtual bool PassAnObstacle(Member* obj) = 0;
-	virtual ~Obstacle() = 0;
+	virtual ~Obstacle() {}
 };
 
 class Wall : public Obstacle
@@ -93,9 +93,10 @@ public:
 	int GetWallH() { return height; }
 	bool PassAnObstacle(Member* obj) override
 	{
-		if (obj->GetHeight() < GetWallH()) { cout << obj->GetName() << "Failed" << endl; return false; }
 		obj->jump();
-		cout << obj->GetName() << "Passed the wall!" << endl;
+		if (obj->GetHeight() < GetWallH()) { cout << obj->GetName() << " Failed" << endl << endl; return false; }
+		cout << obj->GetName() << " Passed the wall!" << endl;
+		cout << endl;
 		return true;
 	}
 	~Wall() override {}
@@ -117,9 +118,10 @@ public:
 	int GetDistance() { return distance; }
 	bool PassAnObstacle(Member* obj) override
 	{
-		if (obj->GetDistanse() < GetDistance()) { cout << obj->GetName() << "Failed" << endl; return false; }
 		obj->run();
-		cout << obj->GetName() << "Ran a treadmill!" << endl;
+		if (obj->GetDistanse() < GetDistance()) { cout << obj->GetName() << " Failed" << endl << endl; return false; }
+		cout << obj->GetName() << " Ran a treadmill!" << endl;
+		cout << endl;
 		return true;
 	}
 	~Treadmill() override {}
@@ -127,8 +129,7 @@ public:
 
 int main()
 {
-	const int size = 3;
-	Member* members[size];
+	Member* members[3];
 
 	members[0] = new Human("Jack", 5, 3);
 	members[1] = new Cat("Barsick", 7, 5);
@@ -139,8 +140,19 @@ int main()
 	obstacle[0] = new Wall(4);
 	obstacle[1] = new Treadmill(8);
 
-	for (size_t i = 0; i < size; i++)
+	for (size_t i = 0; i < 3; i++)
 	{
-
+		cout << "--- " << members[i]->GetName() << " ---" << endl;
+		if (!obstacle[0]->PassAnObstacle(members[i])) {
+			continue;
+		}
+		if (!obstacle[1]->PassAnObstacle(members[i])) {
+			continue;
+		}
+		
 	}
+
+	for (int i = 0; i < 3; i++) delete members[i];
+	for (int i = 0; i < 2; i++) delete obstacle[i];
+
 }
