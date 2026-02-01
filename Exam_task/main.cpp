@@ -1,46 +1,37 @@
 #include <iostream>
 using namespace std;
 
-class Member
+class Participant
 {
 	string Name;
 	int distance;
 	int height;
 public:
-	Member(): Name(""), distance(0), height(0) {}
-	Member(string n, int d, int h): Name(n) {
-		if (d < 0) {
-			cout << "Invalid distance" << endl;
-			distance = 0;
-	    }
-		if (h < 0)
-		{
-			cout << "Invalid height" << endl;
-			height = 0;
-		}
-		distance = d;
-		height = h;
+	Participant(): Name(""), distance(0), height(0) {}
+	Participant(string n, int d, int h): Name(n) {
+		distance = (d < 0) ? 0 : d;
+		height = (h < 0) ? 0 : h;
 	}
 	virtual void GetInfo() = 0;
 	virtual string GetName() { return Name; }
-	int GetDistanse() { return distance; }
+	int GetDistance() { return distance; }
 	int GetHeight() { return height; }
 	virtual void run() = 0;
 	virtual void jump() = 0;
-	virtual ~Member() {}
+	virtual ~Participant() {}
 };
 
-class Human : public Member
+class Human : public Participant
 {
 	int age;
 public:
-	Human(): Member(), age(0) {}
-	Human(string n, int a, int d, int h): Member(n, d, h), age(a) {}
+	Human(): Participant(), age(0) {}
+	Human(string n, int a, int d, int h): Participant(n, d, h), age(a) {}
 	int GetAge() { return age; }
 	void GetInfo() override { cout << "Name: " << GetName() << ", Age: " << GetAge(); }
 	void run() override
 	{
-		cout << "Human is rsunnig" << endl;
+		cout << "Human is runnig" << endl;
 	}
 	void jump() override
 	{
@@ -49,12 +40,12 @@ public:
 	~Human() override {}
 };
 
-class Cat : public Member
+class Cat : public Participant
 {
 	string color;
 public:
-	Cat() : Member(), color("") {}
-	Cat(string n, string c, int d, int h) :  Member(n, d, h), color(c) {}
+	Cat() : Participant(), color("") {}
+	Cat(string n, string c, int d, int h) :  Participant(n, d, h), color(c) {}
 	string GetColor() { return color; }
 	void GetInfo() override { cout << "Name: " << GetName() << ", Color: " << GetColor(); }
 	void run() override
@@ -68,14 +59,14 @@ public:
 	~Cat() override {}
 };
 
-class Robot : public Member
+class Robot : public Participant
 {
-	string matirial;
+	string material;
 public:
-	Robot() : Member(), matirial("") {}
-	Robot(string n, string m, int d, int h) : Member(n, d, h), matirial(m) {}
-	string GetMatiril() { return matirial; }
-	void GetInfo() override { cout << "Name: " << GetName() << ", Matirial: " << GetMatiril(); }
+	Robot() : Participant(), material("") {}
+	Robot(string n, string m, int d, int h) : Participant(n, d, h), material(m) {}
+	string GetMaterial() { return material; }
+	void GetInfo() override { cout << "Name: " << GetName() << ", Matirial: " << GetMaterial(); }
 	void run() override
 	{
 		cout << "Robot is rsunnig" << endl;
@@ -90,7 +81,8 @@ public:
 class Obstacle
 {
 public:
-	virtual bool PassAnObstacle(Member* obj) = 0;
+	virtual bool PassAnObstacle(Participant* obj) = 0;
+	virtual string GetObstacleName() = 0;
 	virtual ~Obstacle() {}
 };
 
@@ -101,17 +93,21 @@ public:
 	Wall(): height(0) {}
 	Wall(int h): height(h) {}
 	int GetWallH() { return height; }
-	bool PassAnObstacle(Member* obj) override
+	string GetObstacleName() override { return "Wall"; }
+	bool PassAnObstacle(Participant* obj) override
 	{
 		obj->jump();
 		if (obj->GetHeight() < GetWallH()) {
-			obj->GetInfo();
-			cout << " Failed" << endl << endl; return false; 
+			cout << "Participant[" << obj->GetName() << "] failed obstacle["
+				<< GetObstacleName() << "] at height[" << GetWallH()
+				<< "]. Passed[" << obj->GetHeight() << "]" << endl;
+			return false;
 		}
-		obj->GetInfo();
-		cout << " Passed the wall!" << endl;
-		cout << endl;
-		return true;
+		else {
+			cout << "Participant[" << obj->GetName() << "] passed obstacle["
+				<< GetObstacleName() << "] at height[" << GetWallH() << "]" << endl;
+			return true;
+		}
 	}
 	~Wall() override {}
 };
@@ -130,24 +126,28 @@ public:
 		distance = d;
 	}
 	int GetDistance() { return distance; }
-	bool PassAnObstacle(Member* obj) override
+	string GetObstacleName() override { return "Treadmill"; }
+	bool PassAnObstacle(Participant* obj) override
 	{
 		obj->run();
-		if (obj->GetDistanse() < GetDistance()) {
-			obj->GetInfo();
-			cout << " Failed" << endl << endl; return false;
+		if (obj->GetDistance() < GetDistance()) {
+			cout << "Participant[" << obj->GetName() << "] failed obstacle["
+				<< GetObstacleName() << "] at distance[" << GetDistance()
+				<< "]. Passed[" << obj->GetDistance() << "]" << endl;
+			return false;
 		}
-		obj->GetInfo();
-		cout << " Ran a treadmill!" << endl;
-		cout << endl;
-		return true;
+		else {
+			cout << "Participant[" << obj->GetName() << "] passed obstacle["
+				<< GetObstacleName() << "] at distance[" << GetDistance() << "]" << endl;
+			return true;
+		}
 	}
 	~Treadmill() override {}
 };
 
 int main()
 {
-	Member* members[3];
+	Participant* members[3];
 
 	members[0] = new Human("Jack", 25, 5, 3);
 	members[1] = new Cat("Barsick", "Black", 7, 5);
