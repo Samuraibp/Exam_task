@@ -91,7 +91,9 @@ class Wall : public Obstacle
 	int height;
 public:
 	Wall(): height(0) {}
-	Wall(int h): height(h) {}
+	Wall(int h) {
+		height = (h < 0) ? 0 : h;
+	}
 	int GetWallH() { return height; }
 	string GetObstacleName() override { return "Wall"; }
 	bool PassAnObstacle(Participant* obj) override
@@ -119,11 +121,7 @@ public:
 	Treadmill(): distance(0) {}
 	Treadmill(int d)
 	{
-		if (d < 0) {
-			cout << "Invalid distance" << endl;
-			distance = 0;
-		}
-		distance = d;
+		distance = (d < 0) ? 0 : d;
 	}
 	int GetDistance() { return distance; }
 	string GetObstacleName() override { return "Treadmill"; }
