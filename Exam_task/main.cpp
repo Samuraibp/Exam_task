@@ -12,10 +12,10 @@ public:
 		distance = (d < 0) ? 0 : d;
 		height = (h < 0) ? 0 : h;
 	}
-	virtual void GetInfo() = 0;
-	virtual string GetName() { return Name; }
-	int GetDistance() { return distance; }
-	int GetHeight() { return height; }
+	virtual void GetInfo()  = 0;
+	virtual string GetName() const { return Name; }
+	int GetDistance() const { return distance; }
+	int GetHeight() const { return height; }
 	virtual void run() = 0;
 	virtual void jump() = 0;
 	virtual ~Participant() {}
@@ -28,7 +28,7 @@ public:
 	Human(): Participant(), age(0) {}
 	Human(string n, int a, int d, int h): Participant(n, d, h), age(a) {}
 	int GetAge() { return age; }
-	void GetInfo() override { cout << "Name: " << GetName() << ", Age: " << GetAge(); }
+	void GetInfo()  override { cout << "Name: " << GetName() << ", Age: " << GetAge(); }
 	void run() override
 	{
 		cout << "Human is runnig" << endl;
@@ -46,8 +46,8 @@ class Cat : public Participant
 public:
 	Cat() : Participant(), color("") {}
 	Cat(string n, string c, int d, int h) :  Participant(n, d, h), color(c) {}
-	string GetColor() { return color; }
-	void GetInfo() override { cout << "Name: " << GetName() << ", Color: " << GetColor(); }
+	string GetColor()  { return color; }
+	void GetInfo()  override { cout << "Name: " << GetName() << ", Color: " << GetColor(); }
 	void run() override
 	{
 		cout << "Cat is rsunnig" << endl;
@@ -65,8 +65,8 @@ class Robot : public Participant
 public:
 	Robot() : Participant(), material("") {}
 	Robot(string n, string m, int d, int h) : Participant(n, d, h), material(m) {}
-	string GetMaterial() { return material; }
-	void GetInfo() override { cout << "Name: " << GetName() << ", Matirial: " << GetMaterial(); }
+	string GetMaterial() const { return material; }
+	void GetInfo()  override { cout << "Name: " << GetName() << ", Matirial: " << GetMaterial(); }
 	void run() override
 	{
 		cout << "Robot is rsunnig" << endl;
